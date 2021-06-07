@@ -51,14 +51,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            _createSearchView(), //Search view demo
             Text(
               '$_query',
             ),
-            _createSearchView(), //Search view demo
           ],
         ),
       ),
@@ -67,10 +68,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _createSearchView() {
     return new Container(
-      decoration: BoxDecoration(border: Border.all(width: 1.0)),
       child: new TextField(
         controller: _searchViewController,
         decoration: InputDecoration(
+          border: new OutlineInputBorder(
+            borderRadius: const BorderRadius.all(
+              const Radius.circular(35.0),
+            ),
+          ),
           hintText: "Search",
           hintStyle: new TextStyle(color: Colors.orange),
         ),
