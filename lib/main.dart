@@ -10,7 +10,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(),
+      theme: ThemeData(
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
       home: MyHomePage(),
       debugShowCheckedModeBanner: false,
     );
@@ -50,21 +52,56 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            _createSearchView(), //Search view demo
-            Text(
-              '$_query',
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < 600) {
+              return _createMobileView();
+            } else {
+              return _createWebView();
+            }
+          },
         ),
-      )),
+      ),
     );
+  }
+
+  Widget _createWebView() {
+    return Container(
+        child: Padding(
+            padding: EdgeInsets.only(
+              left: 100.0,
+              right: 100.0,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _createSearchView(), //Search view demo
+                Text(
+                  '$_query',
+                ),
+              ],
+            )));
+  }
+
+  Widget _createMobileView() {
+    return Container(
+        child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _createSearchView(), //Search view demo
+                Text(
+                  '$_query',
+                ),
+              ],
+            )));
   }
 
   Widget _createSearchView() {
