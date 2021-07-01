@@ -43,6 +43,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _onSearchClicked() {
+    setState(() {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(_query),
+      ));
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -51,9 +59,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    var screenSize = MediaQuery.of(context).size;
+  void dispose() {
+    _searchViewController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: LayoutBuilder(
@@ -114,6 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.only(right: 16, top: 8, bottom: 8),
               child: Container(
                 decoration: BoxDecoration(
+                  color: Colors.white,
                   borderRadius: const BorderRadius.all(
                     Radius.circular(38.0),
                   ),
@@ -128,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: const EdgeInsets.only(
                       left: 16, right: 16, top: 4, bottom: 4),
                   child: TextField(
-                    onChanged: (String txt) {},
+                    controller: _searchViewController,
                     style: const TextStyle(
                       fontSize: 18,
                     ),
@@ -143,6 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: const BorderRadius.all(
                 Radius.circular(38.0),
               ),
@@ -161,6 +175,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 onTap: () {
                   FocusScope.of(context).requestFocus(FocusNode());
+                  _onSearchClicked();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
