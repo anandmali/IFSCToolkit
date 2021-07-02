@@ -1,9 +1,21 @@
 class SearchState {
-  late String _searchQuery;
+  final String searchQuery;
 
-  SearchState._();
+  SearchState({
+    required this.searchQuery,
+  });
 
   factory SearchState.initial() {
-    return SearchState._().._searchQuery = "";
+    return SearchState(
+      searchQuery: "",
+    );
+  }
+
+  SearchState onSearchQueryUpdate({
+    required String searchQuery,
+  }) {
+    return SearchState(
+      searchQuery: searchQuery,
+    );
   }
 }

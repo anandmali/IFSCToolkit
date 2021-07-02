@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:ifsctoolkit/search_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ifsctoolkit/search_event.dart';
 
 void main() {
   runApp(MyApp());
@@ -27,39 +30,38 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  late SearchBloc _searchBloc;
+
   String _query = ""; //Holder for search text
 
   final _searchViewController = TextEditingController();
-
-  void _performSearch() {
-    _searchViewController.addListener(() {
-      setState(() {
-        if (_searchViewController.text.isEmpty) {
-          _query = "Nothing to search";
-        } else {
-          _query = _searchViewController.text;
-        }
-      });
-    });
-  }
-
-  void _onSearchClicked() {
-    setState(() {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(_query),
-      ));
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     // Start listening to changes.
-    _searchViewController.addListener(_performSearch);
+    _searchBloc = BlocProvider.of<SearchBloc>(context);
+    _searchViewController.addListener(_onSearchQueryChanged);
+  }
+
+  void _onSearchQueryChanged() {
+    _searchBloc
+        .add(SearchQueryChanged(searchQuery: _searchViewController.text));
+  }
+
+  void _onSearchClicked() {
+    _searchBloc.add(SearchClickedEvent());
+
+    setState(() {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(_searchBloc.state.searchQuery),
+      ));
+    });
   }
 
   @override
   void dispose() {
+    _searchBloc.close();
     _searchViewController.dispose();
     super.dispose();
   }
@@ -67,15 +69,18 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth < 600) {
-              return _createMobileView();
-            } else {
-              return _createWebView();
-            }
-          },
+      body: BlocProvider<SearchBloc>(
+        create: (context) => SearchBloc(),
+        child: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth < 600) {
+                return _createMobileView();
+              } else {
+                return _createWebView();
+              }
+            },
+          ),
         ),
       ),
     );
